@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EGGT Whitepaper V.4.0 | Egg N Partners 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg2: #f9f9fb;
+    --bg3: #f2f1f7;
+    --border: rgba(0,0,0,0.08);
+    --border-active: rgba(111,66,193,0.3);
+    --text: #0d0d12;
+    --muted: #78788c;
+    --accent: #6f42c1;
+    --accent2: #9b59b6;
+    --accent3: #3d1a8c;
+    --gold: #a07000;
+    --sidebar-w: 272px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    min-height: 100vh;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    position: fixed;
+    top: 0; left: 0;
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+    z-index: 100;
+    transition: transform .3s ease;
+  }
+
+  .sidebar-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0;
+    background: var(--bg2);
+    z-index: 10;
+  }
+
+  .logo-wrap {
+    display: block;
+  }
+
+  .logo-img {
+    width: 100%;
+    max-width: 180px;
+    height: auto;
+    display: block;
+    opacity: 0.9;
+  }
+
+  .logo-sub {
+    font-size: 10px; color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-top: 6px; letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
+  .version-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(111,66,193,0.07);
+    border: 1px solid rgba(111,66,193,0.18);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--accent);
+    margin-top: 10px;
+  }
+
+  .version-badge span {
+    width:6px; height:6px; border-radius:50%;
+    background:var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.25;} }
+
+  nav { padding: 10px 10px; flex: 1; }
+
+  .nav-section { margin-bottom: 4px; }
+
+  .nav-section-label {
+    font-size: 9.5px;
+    font-family: 'DM Mono', monospace;
+    color: #b0b0c0;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    padding: 10px 12px 4px;
+    display: block;
+    font-weight: 400;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 12px;
+    border-radius: 7px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .15s;
+    border: 1px solid transparent;
+    margin-bottom: 1px;
+    font-weight: 400;
+    letter-spacing: -.01em;
+  }
+
+  .nav-item:hover { background: rgba(111,66,193,0.05); color: var(--text); }
+
+  .nav-item.active {
+    background: rgba(111,66,193,0.08);
+    border-color: rgba(111,66,193,0.15);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .nav-item .nav-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 9.5px;
+    color: #c8c8d8;
+    width: 20px;
+    flex-shrink: 0;
+  }
+
+  .nav-item.active .nav-num { color: var(--accent); opacity:.6; }
+
+  .sidebar-footer {
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: #aaa;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .sidebar-footer a { color: #aaa; text-decoration: none; }
+  .sidebar-footer a:hover { color: var(--accent); }
+
+  /* ── CONTENT ── */
+  .content {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 52px;
+    height: 50px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .breadcrumb {
+    font-size: 12px; color: #aaa;
+    display:flex; align-items:center; gap:6px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: .03em;
+  }
+  .breadcrumb span { color: var(--text); font-weight: 500; }
+
+  .topbar-links { display:flex; gap:20px; }
+  .topbar-links a {
+    font-size: 11.5px; color: #aaa; text-decoration:none;
+    font-family: 'DM Mono', monospace;
+    transition: color .15s;
+  }
+  .topbar-links a:hover { color: var(--accent); }
+
+  main { padding: 56px 56px 88px; max-width: 840px; }
+
+  /* ── SECTIONS ── */
+  .section { display:none; }
+  .section.active { display:block; animation: fadeIn .28s ease; }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:translateY(0);} }
+
+  /* ── TYPOGRAPHY ── */
+  h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 34px; font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: -.03em;
+    margin-bottom: 16px;
+    color: #0a0a12;
+  }
+
+  h1 .accent { color: var(--accent); }
+  h1 .accent2 { color: var(--accent2); }
+  h1 .accent3 { color: var(--accent3); }
+
+  h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px; font-weight: 600;
+    margin: 42px 0 14px;
+    color: #0a0a12;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: -.02em;
+  }
+
+  h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px; font-weight: 600;
+    margin: 22px 0 8px;
+    color: var(--text);
+    letter-spacing: -.01em;
+  }
+
+  p { font-size: 14.5px; line-height: 1.78; color: #50505e; margin-bottom: 14px; font-weight: 300; }
+
+  .lead {
+    font-size: 16px; line-height: 1.72;
+    color: #30303c;
+    margin-bottom: 28px;
+    border-left: 3px solid var(--accent);
+    padding-left: 18px;
+    font-weight: 400;
+  }
+
+  /* ── HERO ── */
+  .hero { padding: 38px 0 44px; }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(111,66,193,0.06);
+    border: 1px solid rgba(111,66,193,0.16);
+    border-radius: 20px;
+    padding: 4px 13px;
+    font-size: 10.5px;
+    font-family: 'DM Mono', monospace;
+    color: var(--accent);
+    margin-bottom: 20px;
+    letter-spacing: .07em;
+  }
+
+  /* ── CARDS ── */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; margin: 20px 0; }
+
+  .card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color .2s, box-shadow .2s;
+  }
+
+  .card:hover { border-color: rgba(111,66,193,0.28); box-shadow: 0 2px 10px rgba(111,66,193,0.07); }
+
+  .card-icon {
+    font-size: 18px; margin-bottom: 10px;
+    width: 36px; height: 36px;
+    background: rgba(111,66,193,0.07);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .card h4 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px; font-weight: 600;
+    margin-bottom: 6px; color: #111;
+    letter-spacing: -.01em;
+  }
+  .card p { font-size: 12.5px; color: #666; margin: 0; line-height: 1.62; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-radius: 10px;
+    padding: 15px 20px;
+    margin: 18px 0;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+
+  .callout.info { background: rgba(111,66,193,0.05); border: 1px solid rgba(111,66,193,0.14); }
+  .callout.warning { background: rgba(160,112,0,0.05); border: 1px solid rgba(160,112,0,0.18); }
+  .callout.success { background: rgba(61,26,140,0.05); border: 1px solid rgba(61,26,140,0.14); }
+
+  .callout-icon { font-size: 15px; flex-shrink: 0; margin-top: 2px; }
+  .callout p { margin: 0; font-size: 13px; line-height: 1.65; }
+  .callout.info p { color: #5030a0; }
+  .callout.warning p { color: #7a5200; }
+  .callout.success p { color: #3a1878; }
+
+  /* ── MONO ── */
+  .mono {
+    font-family: 'DM Mono', monospace;
+    background: #f0edf8;
+    border: 1px solid rgba(111,66,193,0.12);
+    border-radius: 5px;
+    padding: 1px 7px;
+    font-size: 11.5px;
+    color: var(--accent3);
+  }
+
+  /* ── STATS ── */
+  .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px,1fr)); gap: 12px; margin: 26px 0; }
+
+  .stat {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+
+  .stat-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 26px; font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+    letter-spacing: -.03em;
+  }
+
+  .stat-label { font-size: 11.5px; color: var(--muted); line-height: 1.4; font-weight: 400; }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 26px; margin: 18px 0; }
+  .timeline::before { content:''; position:absolute; left:6px; top:0; bottom:0; width:1px; background: var(--border); }
+
+  .tl-item { position: relative; margin-bottom: 24px; }
+
+  .tl-dot {
+    position: absolute; left: -22px; top: 5px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 6px rgba(111,66,193,0.3);
+  }
+
+  .tl-dot.gold { background: var(--gold); box-shadow: 0 0 6px rgba(160,112,0,0.3); }
+  .tl-dot.purple { background: var(--accent2); box-shadow: 0 0 6px rgba(155,89,182,0.3); }
+  .tl-dot.green { background: #2d7040; box-shadow: 0 0 6px rgba(45,112,64,0.3); }
+
+  .tl-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; color: var(--muted);
+    margin-bottom: 3px; letter-spacing: .06em;
+  }
+
+  .tl-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 14.5px; font-weight: 600;
+    color: #111; margin-bottom: 4px;
+    letter-spacing: -.01em;
+  }
+  .tl-body { font-size: 13px; color: #666; line-height: 1.62; font-weight: 300; }
+
+  /* ── TABLE ── */
+  table { width:100%; border-collapse:collapse; margin:18px 0; font-size:13.5px; }
+  th { text-align:left; padding:9px 14px; background: var(--bg3); color: #999; font-weight:400; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.09em; border-bottom:1px solid var(--border); }
+  td { padding:11px 14px; border-bottom:1px solid var(--border); color: #555; font-weight: 300; }
+  tr:hover td { background: rgba(111,66,193,0.02); }
+
+  /* ── TAGS ── */
+  .tag {
+    display: inline-flex; align-items: center;
+    background: rgba(111,66,193,0.07);
+    border: 1px solid rgba(111,66,193,0.18);
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--accent);
+    margin: 2px;
+  }
+
+  .tag.gold { background:rgba(160,112,0,.07); border-color:rgba(160,112,0,.2); color:var(--gold); }
+
+  /* ── LIST ── */
+  ul.doc-list { list-style: none; padding:0; margin: 12px 0; }
+  ul.doc-list li {
+    padding: 8px 0 8px 20px;
+    position: relative;
+    font-size: 13.5px; color: #555;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.65;
+    font-weight: 300;
+  }
+  ul.doc-list li::before { content:'→'; position:absolute; left:0; color:var(--accent); font-size:11px; top:10px; }
+
+  /* ── TOKEN ALLOC ── */
+  .alloc-bar { width:100%; height:9px; border-radius:5px; background:var(--bg3); margin-bottom:16px; overflow:hidden; display:flex; border:1px solid var(--border); }
+  .alloc-seg { height:100%; }
+  .alloc-row { display:grid; grid-template-columns:1fr auto auto; gap:10px; align-items:center; padding:9px 0; border-bottom:1px solid var(--border); font-size:13px; }
+  .alloc-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:7px; }
+  .alloc-pct { font-family:'DM Mono',monospace; color:var(--accent); font-size:12px; }
+  .alloc-detail { color:var(--muted); font-size:11.5px; }
+
+  /* ── PARTNER GRID ── */
+  .partner-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(185px,1fr)); gap:11px; margin:18px 0; }
+  .partner-card {
+    background:var(--bg3); border:1px solid var(--border);
+    border-radius:9px; padding:15px;
+    transition: border-color .2s;
+  }
+  .partner-card:hover { border-color:rgba(111,66,193,0.28); }
+  .partner-name { font-family:'Outfit',sans-serif; font-weight:600; font-size:13.5px; margin-bottom:3px; color:#111; letter-spacing:-.01em; }
+  .partner-type { font-size:10.5px; color:var(--muted); font-family:'DM Mono',monospace; }
+
+  /* ── ECOSYSTEM ── */
+  .eco-center {
+    width:96px; height:96px; border-radius:50%;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent3) 100%);
+    display:flex; align-items:center; justify-content:center;
+    margin:0 auto 26px;
+    box-shadow: 0 4px 28px rgba(111,66,193,0.22);
+    font-family:'Outfit',sans-serif; font-weight:700; font-size:18px;
+    text-align:center; color:#fff;
+    letter-spacing:-.02em;
+    animation: glow 3s ease-in-out infinite;
+  }
+
+  @keyframes glow { 0%,100%{box-shadow:0 4px 28px rgba(111,66,193,.22);} 50%{box-shadow:0 4px 38px rgba(111,66,193,.38);} }
+
+  .eco-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:18px; }
+  .eco-node {
+    background:var(--bg3); border:1px solid var(--border);
+    border-radius:9px; padding:13px; text-align:center;
+    transition: border-color .2s;
+  }
+  .eco-node:hover { border-color:rgba(111,66,193,0.22); }
+  .eco-node-icon { font-size:18px; margin-bottom:5px; }
+  .eco-node-label { font-family:'Outfit',sans-serif; font-weight:600; font-size:12.5px; color:#111; margin-bottom:2px; letter-spacing:-.01em; }
+  .eco-node-sub { color:var(--muted); font-size:10.5px; }
+
+  /* ── DOC NAV ── */
+  .doc-nav {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top: 52px; padding-top: 18px;
+    border-top: 1px solid var(--border);
+  }
+
+  .doc-nav-btn {
+    display:flex; align-items:center; gap:6px;
+    padding:8px 15px;
+    background:var(--bg3); border:1px solid var(--border);
+    border-radius:7px; cursor:pointer;
+    font-size:12.5px; color:var(--muted);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 400;
+    transition: all .15s;
+  }
+
+  .doc-nav-btn:hover { border-color:rgba(111,66,193,0.28); color:var(--accent); background:#fff; }
+
+  /* ── MOBILE ── */
+  .menu-toggle {
+    display:none;
+    position:fixed; top:10px; left:10px; z-index:200;
+    background:#fff; border:1px solid var(--border);
+    border-radius:7px; width:34px; height:34px;
+    align-items:center; justify-content:center;
+    cursor:pointer; font-size:15px; color:var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+
+  @media(max-width:768px){
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .content { margin-left:0; }
+    .menu-toggle { display:flex; }
+    main { padding:24px 20px 60px; }
+    .topbar { padding:0 16px 0 52px; }
+    h1 { font-size:26px; }
+    .stats { grid-template-columns:1fr 1fr; }
+    .eco-grid { grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-wrap">
+      <img class="logo-img" src="data:image/png;base64,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" alt="Egg N Partners"/>
+    </div>
+    <div class="logo-sub">Whitepaper V.4.0 · 2026</div>
+    <div class="version-badge"><span></span> LIVE DOCUMENT</div>
+  </div>
+
+  <nav>
+    <div class="nav-section">
+      <span class="nav-section-label">Start</span>
+      <div class="nav-item active" onclick="show('intro')">
+        <span class="nav-num">—</span>🏠 Overview
+      </div>
+    </div>
+    <div class="nav-section">
+      <span class="nav-section-label">About EGGT</span>
+      <div class="nav-item" onclick="show('abstract')"><span class="nav-num">01</span>Abstract</div>
+      <div class="nav-item" onclick="show('introduction')"><span class="nav-num">02</span>Introduction</div>
+      <div class="nav-item" onclick="show('problem')"><span class="nav-num">03</span>Problem Statement</div>
+      <div class="nav-item" onclick="show('governance')"><span class="nav-num">04</span>Governance System</div>
+      <div class="nav-item" onclick="show('ecosystem')"><span class="nav-num">05</span>EGGT Ecosystem</div>
+    </div>
+    <div class="nav-section">
+      <span class="nav-section-label">About Eggverse</span>
+      <div class="nav-item" onclick="show('nft')"><span class="nav-num">06</span>NFT & RWA Commerce</div>
+      <div class="nav-item" onclick="show('web3')"><span class="nav-num">07</span>Web3 Infrastructure</div>
+      <div class="nav-item" onclick="show('p2e')"><span class="nav-num">08</span>P2E Platform</div>
+      <div class="nav-item" onclick="show('poll')"><span class="nav-num">09</span>Blockchain Poll</div>
+      <div class="nav-item" onclick="show('defi')"><span class="nav-num">10</span>EGGTFI / DeFi Layer</div>
+    </div>
+    <div class="nav-section">
+      <span class="nav-section-label">Other Information</span>
+      <div class="nav-item" onclick="show('tokenomics')"><span class="nav-num">11</span>Token Allocation</div>
+      <div class="nav-item" onclick="show('partners')"><span class="nav-num">12</span>Partners</div>
+      <div class="nav-item" onclick="show('roadmap')"><span class="nav-num">13</span>Roadmap 2026</div>
+      <div class="nav-item" onclick="show('team')"><span class="nav-num">14</span>Team & Advisors</div>
+      <div class="nav-item" onclick="show('disclaimer')"><span class="nav-num">15</span>Disclaimer</div>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="https://www.eggt.io" target="_blank">eggt.io ↗</a>
+    <span>© 2026</span>
+  </div>
+</aside>
+
+<div class="content">
+  <div class="topbar">
+    <div class="breadcrumb">EN | EGGT White paper <span>/ 2026 Edition</span></div>
+    <div class="topbar-links">
+      <a href="https://www.eggt.io" target="_blank">EGGT.io</a>
+      <a href="https://eggverse.gitbook.io/eggt-documents-1" target="_blank">Legacy Docs</a>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- INTRO -->
+    <div class="section active" id="intro">
+      <div class="hero">
+        <div class="hero-eyebrow">✦ EGGT WHITEPAPER · VERSION 4.0 · APRIL 2026</div>
+        <h1>The Dawn of the<br/><span class="accent">RWA Empire</span></h1>
+        <p class="lead">A novel governance token with multi-vote and anonymous voting functions, paired with an NFT-compatible re-trade O2O metaverse platform — unified under a single Web3 commerce layer connecting all value in the world.</p>
+        <div class="stats">
+          <div class="stat"><div class="stat-value">$16T</div><div class="stat-label">Global illiquid asset market targeted</div></div>
+          <div class="stat"><div class="stat-value">150K+</div><div class="stat-label">IP library via Danal (KOSDAQ)</div></div>
+          <div class="stat"><div class="stat-value">2021</div><div class="stat-label">EGGT Foundation established, Singapore</div></div>
+          <div class="stat"><div class="stat-value">2+</div><div class="stat-label">Exchanges listed (ProBit, GOPAX)</div></div>
+        </div>
+        <div class="callout info">
+          <span class="callout-icon">ℹ</span>
+          <p>Egg N Partners (EGGT) is a global Web3 infrastructure company bridging real-world assets (RWA) with on-chain economies. Backed by leading global VCs including Gemhead and M2M, the company enables everyday consumers to own and spend tokens as part of their daily lives — regardless of crypto familiarity.</p>
+        </div>
+      </div>
+      <h2>What is EGGT?</h2>
+      <p>EGGT is the governance and utility token at the core of the Egg N Partners ecosystem. It powers a suite of interconnected products — from an NFT marketplace and P2E gaming platform to Blockchain Poll infrastructure and on-chain ticketing for K-pop and global artists — all unified under a single Web3 commerce layer.</p>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon">🏛️</div><h4>Governance Token</h4><p>Multi-vote and anonymous voting systems for on-chain decision making without relying on centralized entities.</p></div>
+        <div class="card"><div class="card-icon">🔁</div><h4>RWA Tokenization</h4><p>Converting frozen real-world assets — IP, real estate, mobility hardware — into 24/7 flowing on-chain capital.</p></div>
+        <div class="card"><div class="card-icon">🎮</div><h4>P2E + NFT Commerce</h4><p>Play-to-earn integrated gaming platform with NFT marketplace and on-chain ticketing for live entertainment.</p></div>
+        <div class="card"><div class="card-icon">🗳️</div><h4>Blockchain Poll</h4><p>Decentralized polling infrastructure with privacy guarantees and on-chain result verification.</p></div>
+      </div>
+      <div class="doc-nav"><span></span><button class="doc-nav-btn" onclick="show('abstract')">01. Abstract →</button></div>
+    </div>
+
+    <!-- ABSTRACT -->
+    <div class="section" id="abstract">
+      <div class="hero-eyebrow">01 · ABOUT EGGT</div>
+      <h1><span class="accent">Abstract</span></h1>
+      <p class="lead">EGGT is a governance aggregation token designed for the implementation of multi-smart contract ecosystems using a Standardless system — enabling anonymous, multi-party voting and real-world asset liquidity on a single unified platform.</p>
+      <p>The global financial system holds an estimated <strong>$16 trillion</strong> in illiquid real-world assets — intellectual property, real estate, luxury goods, entertainment rights, and future mobility hardware — that remain inaccessible to ordinary investors. Legacy financial infrastructure perpetuates this inefficiency through multi-year lock-up periods, opaque settlement mechanisms, and exclusive access reserved for institutional players.</p>
+      <p>Egg N Partners was founded in 2021 with a single mandate: convert "frozen assets" into "24/7 flowing capital." The EGGT token is the instrument of this mission — a governance layer that simultaneously enables decentralized decision-making, incentivizes community participation, and unlocks liquidity across tokenized real-world asset classes.</p>
+      <h2>Core Innovation</h2>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon">🔐</div><h4>Anonymous Voting</h4><p>Zero-knowledge-compatible polling infrastructure that preserves voter privacy while ensuring on-chain verifiability and tamper resistance.</p></div>
+        <div class="card"><div class="card-icon">🗳️</div><h4>Multi-Vote Function</h4><p>Role-differentiated, stake-weighted voting enables nuanced community governance beyond simple binary proposals.</p></div>
+        <div class="card"><div class="card-icon">🔗</div><h4>Standardless System</h4><p>A proprietary multi-smart contract architecture that removes dependency on rigid token standards, enabling flexible asset interoperability.</p></div>
+        <div class="card"><div class="card-icon">🌐</div><h4>O2O Metaverse Bridge</h4><p>Online-to-offline commerce layer connecting physical retail goods, experiences, and entertainment to on-chain NFT representations.</p></div>
+      </div>
+      <div class="callout success">
+        <span class="callout-icon">✓</span>
+        <p><strong>Mission Statement:</strong> To build an ecosystem where the general public — regardless of crypto familiarity — can seamlessly participate in the tokenized economy through real-world retail and distribution channels.</p>
+      </div>
+      <div class="doc-nav"><button class="doc-nav-btn" onclick="show('intro')">← Overview</button><button class="doc-nav-btn" onclick="show('introduction')">02. Introduction →</button></div>
+    </div>
+
+    <!-- INTRODUCTION -->
+    <div class="section" id="introduction">
+      <div class="hero-eyebrow">02 · ABOUT EGGT</div>
+      <h1><span class="accent">Introduction</span></h1>
+      <p class="lead">Egg N Partners is a global Web3 infrastructure company headquartered in Korea, with a Singapore Foundation established for EGGT. The company bridges real-world assets with on-chain economies through a comprehensive suite of blockchain-native products.</p>
+      <table>
+        <tr><th>FIELD</th><th>DETAIL</th></tr>
+        <tr><td>Company Name</td><td>Egg N Partners Co., Ltd.</td></tr>
+        <tr><td>CEO</td><td>Hyun Ik-Jae</td></tr>
+        <tr><td>Business Area</td><td>Software Development & Supply</td></tr>
+        <tr><td>Date Founded</td><td>March 2022</td></tr>
+        <tr><td>Core Service</td><td>RWA Tokenization & Web3 Commerce Infrastructure</td></tr>
+        <tr><td>Homepage</td><td><span class="mono">www.eggt.io</span></td></tr>
+        <tr><td>EGGT Foundation</td><td>Singapore (established 2021)</td></tr>
+        <tr><td>Exchange Listings</td><td>ProBit Global (USDT), GOPAX (KRW)</td></tr>
+      </table>
+      <h2>Company History</h2>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-dot gold"></div><div class="tl-year">2021</div><div class="tl-title">Foundation & Design Phase</div><div class="tl-body">Proposed EGGT integrated governance token ecosystem. Designed Egg N Partners platform. Established EGGT Singapore Foundation. Developed beta and MVP versions.</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2022</div><div class="tl-title">Launch & First Listings</div><div class="tl-body">Official platform launch with Polygon support. EGGT listed on ProBit Global. Sold out real-world livestock NFTs and Pro-Am Golf RWA NFTs. Secured KRW 10B Pre-A investment from Danal Group. MOU with Lotte Home Shopping, Gooroomee, Bemily, Uniwide.</div></div>
+        <div class="tl-item"><div class="tl-dot purple"></div><div class="tl-year">2023</div><div class="tl-title">Ecosystem Expansion</div><div class="tl-body">Partnership with Polygon Labs. Distribution of role-based governance NFTs. MOU with KOSDAQ-listed Eight One. Commissioned Lotte Home Shopping NFT Shop mainnet. Partnership with Bifrost.</div></div>
+        <div class="tl-item"><div class="tl-dot green"></div><div class="tl-year">2024</div><div class="tl-title">Ticketing & DeFi Integration</div><div class="tl-body">On-Chain Ticket marketplace launched. Golf NFT tickets sold out. Integration with AhnLab Web 3.0 wallet. Partnership with Ruby Records and Hype Lab. EGGT listed on GOPAX KRW market.</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2025</div><div class="tl-title">Strategic Alliances</div><div class="tl-body">Strategic partnership with PICAON. MOU with Blockstreet. Community reward and airdrop campaigns. Strategic MOU with NASDAQ-listed EHang Holdings for UAM hardware RWA.</div></div>
+        <div class="tl-item"><div class="tl-dot gold"></div><div class="tl-year">2026</div><div class="tl-title">Global Scaling Phase</div><div class="tl-body">Advancement toward TOP-tier global exchange listing. P2E integrated platform launch. Blockchain Poll launch. Luxury rental services for U.S. market. RWA-backed NFT marketplace expansion.</div></div>
+      </div>
+      <div class="doc-nav"><button class="doc-nav-btn" onclick="show('abstract')">← 01. Abstract</button><button class="doc-nav-btn" onclick="show('problem')">03. Problem →</button></div>
+    </div>
+
+    <!-- PROBLEM -->
+    <div class="section" id="problem">
+      <div class="hero-eyebrow">03 · ABOUT EGGT</div>
+      <h1>The <span class="accent">$16T Trap</span></h1>
+      <p class="lead">Traditional financial infrastructure is failing to unlock the value locked in high-value real-world assets. The global illiquid asset market represents a $16 trillion opportunity — frozen by structural inefficiencies that only blockchain can solve.</p>
+      <h2>Three Structural Failures</h2>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon">🔒</div><h4>Capital Stagnation</h4><p>Multi-year lock-up periods for high-value intellectual property and physical assets prevent liquidity from being deployed efficiently.</p></div>
+        <div class="card"><div class="card-icon">🕳️</div><h4>Opaque Settlements</h4><p>Legacy platforms monopolize up to 99% of profits through centralized black-box systems, leaving creators with negligible economic benefit.</p></div>
+        <div class="card"><div class="card-icon">🚫</div><h4>Exclusive Access</h4><p>Elite investment opportunities restricted to a closed circle of institutional giants, locking out the general public from high-yield asset classes.</p></div>
+      </div>
+      <div class="callout warning">
+        <span class="callout-icon">⚠</span>
+        <p><strong>The Mission:</strong> Converting "Frozen Assets" into "24/7 Flowing Capital." EGGT's blockchain infrastructure enables fractional ownership, continuous settlement, and transparent profit distribution — eliminating all three structural failures simultaneously.</p>
+      </div>
+      <h2>The Market Opportunity</h2>
+      <p>The RWA tokenization market reached $26.4B in 2026, with exponential growth driven by institutional adoption, regulatory clarity in Singapore, UAE, and Korea, and maturing multi-chain interoperability infrastructure. EGGT is uniquely positioned through exclusive partnerships with NASDAQ- and KOSDAQ-listed companies.</p>
+      <div class="stats">
+        <div class="stat"><div class="stat-value">$26.4B</div><div class="stat-label">Global RWA market cap (2026)</div></div>
+        <div class="stat"><div class="stat-value">99%</div><div class="stat-label">Profit monopolized by legacy platforms</div></div>
+        <div class="stat"><div class="stat-value">24/7</div><div class="stat-label">Settlement liquidity enabled on-chain</div></div>
+      </div>
+      <div class="doc-nav"><button class="doc-nav-btn" onclick="show('introduction')">← 02. Introduction</button><button class="doc-nav-btn" onclick="show('governance')">04. Governance →</button></div>
+    </div>
+
+    <!-- GOVERNANCE -->
+    <div class="section" id="governance">
+      <div class="hero-eyebrow">04 · ABOUT EGGT</div>
+      <h1>Governance <span class="accent2">System</span></h1>
+      <p class="lead">EGGT's governance architecture introduces two breakthrough functions — multi-vote and anonymous vote — built on a proprietary Standardless system using multi-smart contracts to enable trustless, privacy-preserving community decision-making at scale.</p>
+      <h2>Multi-Vote Function</h2>
+      <p>Traditional token governance systems offer binary yes/no votes that fail to capture nuanced community preferences. EGGT's multi-vote function enables stake-weighted, role-differentiated voting where participants can allocate voting power across multiple proposals simultaneously.</p>
+      <ul class="doc-list">
+        <li>Role-based NFTs determine voter tier and corresponding governance weight</li>
+        <li>Simultaneous proposal participation without gas overhead fragmentation</li>
+        <li>Dynamic quorum calculation based on active token supply, not total supply</li>
+        <li>Delegated voting support for passive token holders</li>
+      </ul>
+      <h2>Anonymous Vote Function</h2>
+      <p>Privacy in governance is essential for honest participation. EGGT's anonymous voting mechanism allows token holders to cast verifiable votes without revealing their identity or wallet address on-chain.</p>
+      <ul class="doc-list">
+        <li>Zero-knowledge compatible commitment scheme for ballot privacy</li>
+        <li>On-chain result verifiability without identity disclosure</li>
+        <li>Applicable to both governance proposals and Blockchain Poll modules</li>
+        <li>Tamper-resistant tally with cryptographic audit trails</li>
+      </ul>
+      <h2>EGGT Governance App</h2>
+      <div class="callout info">
+        <span class="callout-icon">📱</span>
+        <p>The EGGT Governance application provides a unified interface for token holders to participate in platform governance, submit proposals, delegate voting power, and review historical decisions — with full transaction traceability on Polygon.</p>
+      </div>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon">📋</div><h4>Proposal Submission</h4><p>Any holder of a qualifying role-based NFT may submit governance proposals subject to a minimum stake threshold.</p></div>
+        <div class="card"><div class="card-icon">⚖️</div><h4>Weighted Voting</h4><p>Voting power is determined by both token holdings and governance NFT tier, ensuring informed participants carry appropriate influence.</p></div>
+        <div class="card"><div class="card-icon">🔍</div><h4>On-Chain Transparency</h4><p>All governance outcomes are recorded immutably on-chain, providing a verifiable historical record accessible to any observer.</p></div>
+      </div>
+      <div class="doc-nav"><button class="doc-nav-btn" onclick="show('problem')">← 03. Problem</button><button class="doc-nav-btn" onclick="show('ecosystem')">05. Ecosystem →</button></div>
+    </div>
+
+    <!-- ECOSYSTEM -->
+    <div class="section" id="ecosystem">
+      <div class="hero-eyebrow">05 · ABOUT EGGT</div>
+      <h1>EGGT <span class="accent">Ecosystem</span></h1>
+      <p class="lead">The EGGT ecosystem is a self-reinforcing flywheel of interconnected products — each generating demand for the EGGT token and creating compounding network effects across RWA tokenization, gaming, entertainment, and decentralized finance.</p>
+      <div class="eco-center">EGGT</div>
+      <div class="eco-grid">
+        <div class="eco-node"><div class="eco-node-icon">🏪</div><div class="eco-node-label">NFT Marketplace</div><div class="eco-node-sub">RWA-backed O2O trading</div></div>
+        <div class="eco-node"><div class="eco-node-icon">🎮</div><div class="eco-node-label">P2E Platform</div><div class="eco-node-sub">Multiple game services</div></div>
+        <div class="eco-node"><div class="eco-node-icon">🎫</div><div class="eco-node-label">On-Chain Ticketing</div><div class="eco-node-sub">K-pop & global artists</div></div>
+        <div class="eco-node"><div class="eco-node-icon">🗳️</div><div class="eco-node-label">Blockchain Poll</div><div class="eco-node-sub">Anonymous governance</div></div>
+        <div class="eco-node"><div class="eco-node-icon">💱</div><div class="eco-node-label">EGGTFI</div><div class="eco-node-sub">DeFi & staking layer</div></div>
+        <div class="eco-node"><div class="eco-node-icon">🚁</div><div class="eco-node-label">UAM / EHang</div><div class="eco-node-sub">Future mobility RWA</div></div>
+      </div>
+      <h2>Token Utility Flow</h2>
+      <p>EGGT functions as the connective tissue across all platform verticals. Users earn EGGT through platform participation, spend it to access premium features, stake it for governance rights, and use it as settlement currency across the full ecosystem.</p>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon">💰</div><h4>Earn</h4><p>Trading rewards, airdrop programs, P2E in-game earnings, community participation bonuses.</p></div>
+        <div class="card"><div class="card-icon">🛒</div><h4>Spend</h4><p>NFT marketplace purchases, event tickets, premium governance tiers, luxury rental services.</p></div>
+        <div class="card"><div class="card-icon">🏦</div><h4>Stake</h4><p>Governance participation, yield farming via EGGTFI, validator node operation.</p></div>
+        <div class="card"><div class="card-icon">🔄</div><h4>Trade</h4><p>USDT market on ProBit Global, KRW market on GOPAX, upcoming top-tier global exchange.</p></div>
+      </div>
+      <div class="doc-nav"><button class="doc-nav-btn" onclick="show('governance')">← 04. Governance</button><button class="doc-nav-btn" onclick="show('nft')">06. NFT & RWA →</button></div>
+    </div>
+
+    <!-- NFT -->
+    <div class="section" id="nft">
+      <div class="hero-eyebrow">06 · ABOUT EGGVERSE</div>
+      <h1>NFT & <span class="accent">RWA Commerce</span></h1>
+      <p class="lead">The Eggverse NFT marketplace is the primary interface for real-world asset tokenization — enabling fractional ownership, re-trading, and on-chain settlement for physical goods, IP rights, and live experiences through a proprietary O2O commerce bridge.</p>
+      <h2>NFT-Compatible Re-Trading</h2>
+      <p>Unlike standard NFT platforms, Eggverse introduces a re-trading mechanism that maintains the link between digital NFT and its underlying physical or IP asset across multiple transfers. Each re-sale automatically distributes royalties to original asset owners, platform operators, and community governance pools.</p>
+      <ul class="doc-list">
+        <li>Livestock RWA NFTs (premium pork) — fully sold out, 2022</li>
+        <li>Pro-Am Golf real-asset NFTs — fully sold out, 2022</li>
+        <li>SH Suhyup Bank MBN Golf NFTs — fully sold out, 2024</li>
+        <li>KPGA Kolon Open Korea Golf NFT tickets — fully sold out, 2024</li>
+        <li>Jeon Hyun-moo "Mootal" influencer NFTs — fully sold out, 2022</li>
+        <li>Lotte Home Shopping NFT Shop mainnet — enterprise development, 2023</li>
+      </ul>
+      <h2>Asset Classes Supported</h2>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon">🎵</div><h4>IP & Entertainment</h4><p>Tokenized access to Danal's 150,000+ IP library — music, video content, and celebrity partnerships including Ruby Records.</p></div>
+        <div class="card"><div class="card-icon">🎫</div><h4>Live Ticketing</h4><p>On-chain event tickets for K-pop concerts, golf tournaments, and global entertainment via Hype Lab integration.</p></div>
+        <div class="card"><div class="card-icon">🥩</div><h4>Physical Goods</h4><p>Premium agricultural products, luxury goods, and consumer items with blockchain-verified provenance and delivery.</p></div>
+        <div class="card"><div class="card-icon">🚁</div><h4>Future Mobility</h4><p>Hardware RWA through NASDAQ-listed EHang Holdings — the first tokenized UAM (Urban Air Mobility) asset class.</p></div>
+      </div>
+      <div class="doc-nav"><button class="doc-nav-btn" onclick="show('ecosystem')">← 05. Ecosystem</button><button class="doc-nav-btn" onclick="show('web3')">07. Web3 Infra →</button></div>
+    </div>
+
+    <!-- WEB3 -->
+    <div class="section" id="web3">
+      <div class="hero-eyebrow">07 · ABOUT EGGVERSE</div>
+      <h1>Web3 <span class="accent">Infrastructure</span></h1>
+      <p class="lead">Eggverse is built on a multi-chain architecture — combining Polygon's scalability, Bifrost's cross-chain liquidity, and AhnLab's enterprise-grade Web 3.0 wallet stack into a seamless experience for both crypto-native and mainstream audiences.</p>
+      <h2>Multichain Architecture</h2>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon">🔷</div><h4>Polygon</h4><p>Primary settlement layer for all NFT minting, trading, and governance transactions with low fees and high throughput.</p></div>
+        <div class="card"><div class="card-icon">🌉</div><h4>Bifrost</h4><p>Cross-chain liquidity protocol enabling EGGT to flow across blockchain ecosystems without centralized exchange dependency.</p></div>
+        <div class="card"><div class="card-icon">🔐</div><h4>AhnLab Web3 Wallet</h4><p>Enterprise-grade wallet infrastructure from Korea's leading cybersecurity firm, enabling institutional-grade key management.</p></div>
+      </div>
+      <div class="callout info">
+        <span class="callout-icon">🏗️</span>
+        <p><strong>Large Enterprise NFT Development:</strong> Egg N Partners demonstrated institutional-grade development capability through the commissioned mainnet build for Lotte Home Shopping's NFT Shop — Korea's largest home shopping network with over 40 million viewers.</p>
+      </div>
+      <h2>NFT Launchpad</h2>
+      <p>The Eggverse NFT Launchpad allows third-party brands, artists, and enterprises to issue and distribute their own RWA-backed NFTs on the platform, expanding the ecosystem while driving EGGT demand through platform fee settlements and governance requirements.</p>
+      <div class="doc-nav"><button class="doc-nav-btn" onclick="show('nft')">← 06. NFT & RWA</button><button class="doc-nav-btn" onclick="show('p2e')">08. P2E Platform →</button></div>
+    </div>
+
+    <!-- P2E -->
+    <div class="section" id="p2e">
+      <div class="hero-eyebrow">08 · ABOUT EGGVERSE</div>
+      <h1><span class="accent2">P2E</span> Platform</h1>
+      <p class="lead">The Egg N Partners P2E (Play-to-Earn) integrated platform — launching Q2 2026 — brings multiple game services under a unified EGGT token economy, enabling players to earn real on-chain value through gameplay.</p>
+      <div class="callout info">
+        <span class="callout-icon">🎮</span>
+        <p>The P2E platform is being developed through a strategic partnership with game portal PICAON and Singapore-based Weracle. It represents the primary new growth vector for EGGT in 2026, alongside the Blockchain Poll launch and U.S. luxury rental market expansion.</p>
+      </div>
+      <h2>Platform Architecture</h2>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon">🎯</div><h4>Multi-Game Integration</h4><p>A single EGGT wallet connects to multiple game experiences, eliminating fragmented token economies per title.</p></div>
+        <div class="card"><div class="card-icon">🏆</div><h4>Tournament Infrastructure</h4><p>On-chain prize pools, verifiable leaderboards, and transparent tournament mechanics with instant settlement.</p></div>
+        <div class="card"><div class="card-icon">🔄</div><h4>In-Game → On-Chain</h4><p>Earned in-game EGGT transfers directly to user wallets — no conversion, no lock-up, no opaque exchange rates.</p></div>
+        <div class="card"><div class="card-icon">🎨</div><h4>NFT In-Game Items</h4><p>Game assets issued as NFTs on Eggverse are tradeable on the open marketplace, creating real economic value from virtual goods.</p></div>
+      </div>
+      <div class="doc-nav"><button class="doc-nav-btn" onclick="show('web3')">← 07. Web3 Infra</button><button class="doc-nav-btn" onclick="show('poll')">09. Blockchain Poll →</button></div>
+    </div>
+
+    <!-- POLL -->
+    <div class="section" id="poll">
+      <div class="hero-eyebrow">09 · ABOUT EGGVERSE</div>
+      <h1>Blockchain <span class="accent">Poll</span></h1>
+      <p class="lead">Blockchain Poll is Egg N Partners' decentralized polling infrastructure — a general-purpose anonymous voting system that extends EGGT governance capabilities to public surveys, fan votes, corporate decision-making, and civic participation.</p>
+      <div class="callout success">
+        <span class="callout-icon">🗳️</span>
+        <p><strong>Launching Q3 2026.</strong> Blockchain Poll represents one of the primary new product launches in the 2026 roadmap, expanding EGGT utility into a broadly deployable decentralized polling infrastructure that any organization can integrate.</p>
+      </div>
+      <h2>Core Capabilities</h2>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon">🔒</div><h4>Anonymous Participation</h4><p>Voters participate without revealing wallet addresses, preventing vote-buying, coercion, and social pressure dynamics.</p></div>
+        <div class="card"><div class="card-icon">✅</div><h4>Verifiable Results</h4><p>Every poll result is cryptographically provable and auditable by any third party — without compromising voter identity.</p></div>
+        <div class="card"><div class="card-icon">📊</div><h4>Flexible Poll Types</h4><p>Single-choice, multi-choice, ranked-choice, and weighted polls all supported within the same smart contract framework.</p></div>
+        <div class="card"><div class="card-icon">🏢</div><h4>Enterprise Integration</h4><p>API-accessible poll creation for brands, media companies, and institutions seeking blockchain-verified audience engagement.</p></div>
+      </div>
+      <h2>Use Cases</h2>
+      <ul class="doc-list">
+        <li>K-pop fan voting for music awards and comeback decisions</li>
+        <li>Corporate AGM and board-level decision ratification</li>
+        <li>Sports team fan governance (squad selection, jersey design)</li>
+        <li>Media platform content curation and editorial direction</li>
+        <li>Public sector consultations with verifiable participation records</li>
+        <li>NFT community governance proposals within Eggverse ecosystem</li>
+      </ul>
+      <div class="doc-nav"><button class="doc-nav-btn" onclick="show('p2e')">← 08. P2E</button><button class="doc-nav-btn" onclick="show('defi')">10. EGGTFI →</button></div>
+    </div>
+
+    <!-- DEFI -->
+    <div class="section" id="defi">
+      <div class="hero-eyebrow">10 · ABOUT EGGVERSE</div>
+      <h1><span class="accent2">EGGTFI</span> / DeFi Layer</h1>
+      <p class="lead">EGGTFI is the decentralized finance layer of the Eggverse ecosystem — providing staking, liquidity provision, and yield farming mechanisms that create sustainable economic incentives for long-term EGGT token holders.</p>
+      <h2>EGGVERSE Economy</h2>
+      <p>The EGGVERSE economy operates on a circular token flow model: users earn EGGT through platform activity, stake it in EGGTFI to earn yield, use governance weight from their stake to influence platform decisions, and receive EGGT distributions from platform revenue — creating a closed-loop incentive system.</p>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon">📈</div><h4>Staking Rewards</h4><p>EGGT holders can stake tokens to earn protocol rewards drawn from platform transaction fees across all ecosystem verticals.</p></div>
+        <div class="card"><div class="card-icon">💧</div><h4>Liquidity Pools</h4><p>EGGT/USDT and EGGT/KRW liquidity pools incentivize market depth, reducing slippage for retail and institutional traders.</p></div>
+        <div class="card"><div class="card-icon">🏦</div><h4>RWA Collateral</h4><p>Tokenized real-world assets can be used as collateral within EGGTFI lending markets, unlocking capital efficiency for NFT holders.</p></div>
+      </div>
+      <div class="callout info">
+        <span class="callout-icon">⚡</span>
+        <p><strong>EGGTcourt Governance:</strong> The EGGTcourt is a specialized governance sub-module within EGGTFI that handles dispute resolution for RWA-backed NFT claims — providing a decentralized arbitration mechanism without legal system dependency.</p>
+      </div>
+      <div class="doc-nav"><button class="doc-nav-btn" onclick="show('poll')">← 09. Blockchain Poll</button><button class="doc-nav-btn" onclick="show('tokenomics')">11. Tokenomics →</button></div>
+    </div>
+
+    <!-- TOKENOMICS -->
+    <div class="section" id="tokenomics">
+      <div class="hero-eyebrow">11 · OTHER INFORMATION</div>
+      <h1>Token <span class="accent">Allocation</span></h1>
+      <p class="lead">The EGGT token distribution is designed to balance long-term ecosystem sustainability with adequate liquidity for public market participation, community incentivization, and operational funding.</p>
+      <div class="alloc-bar">
+        <div class="alloc-seg" style="background:#6f42c1;width:30%;"></div>
+        <div class="alloc-seg" style="background:#9b59b6;width:20%;"></div>
+        <div class="alloc-seg" style="background:#3d1a8c;width:20%;"></div>
+        <div class="alloc-seg" style="background:#a07000;width:15%;"></div>
+        <div class="alloc-seg" style="background:#c0a8e0;width:10%;"></div>
+        <div class="alloc-seg" style="background:#e0e0e8;width:5%;"></div>
+      </div>
+      <div class="alloc-row"><div><span class="alloc-dot" style="background:#6f42c1;"></span>Community & Ecosystem</div><div class="alloc-pct">30%</div><div class="alloc-detail">Airdrop, trading rewards, platform incentives</div></div>
+      <div class="alloc-row"><div><span class="alloc-dot" style="background:#9b59b6;"></span>Team & Advisors</div><div class="alloc-pct">20%</div><div class="alloc-detail">24-month vesting, 6-month cliff</div></div>
+      <div class="alloc-row"><div><span class="alloc-dot" style="background:#3d1a8c;"></span>Ecosystem Development</div><div class="alloc-pct">20%</div><div class="alloc-detail">Partner integrations, new product launches</div></div>
+      <div class="alloc-row"><div><span class="alloc-dot" style="background:#a07000;"></span>Foundation Reserve</div><div class="alloc-pct">15%</div><div class="alloc-detail">Singapore Foundation operational reserve</div></div>
+      <div class="alloc-row"><div><span class="alloc-dot" style="background:#c0a8e0;"></span>Early Investors</div><div class="alloc-pct">10%</div><div class="alloc-detail">Danal Group, Gemhead, M2M; 18-month vesting</div></div>
+      <div class="alloc-row"><div><span class="alloc-dot" style="background:#e0e0e8;border:1px solid #ccc;"></span>Liquidity</div><div class="alloc-pct">5%</div><div class="alloc-detail">Exchange market making, DEX pools</div></div>
+      <h2>Exchange Listings</h2>
+      <table>
+        <tr><th>EXCHANGE</th><th>MARKET</th><th>LISTED</th><th>STATUS</th></tr>
+        <tr><td>ProBit Global</td><td>EGGT/USDT</td><td>January 14, 2022</td><td><span class="tag">Active</span></td></tr>
+        <tr><td>GOPAX</td><td>EGGT/KRW</td><td>November 22, 2024</td><td><span class="tag">Active</span></td></tr>
+        <tr><td>Top-Tier Global Exchange</td><td>TBC</td><td>Target 2026</td><td><span class="tag gold">Planned</span></td></tr>
+      </table>
+      <div class="doc-nav"><button class="doc-nav-btn" onclick="show('defi')">← 10. EGGTFI</button><button class="doc-nav-btn" onclick="show('partners')">12. Partners →</button></div>
+    </div>
+
+    <!-- PARTNERS -->
+    <div class="section" id="partners">
+      <div class="hero-eyebrow">12 · OTHER INFORMATION</div>
+      <h1>Strategic <span class="accent">Partners</span></h1>
+      <p class="lead">Egg N Partners has established an institutional-grade partner network across public markets, blockchain infrastructure, entertainment, and finance — creating a strategic moat that competitors cannot easily replicate.</p>
+      <div class="callout warning">
+        <span class="callout-icon">🏛️</span>
+        <p><strong>Unrivalled Credibility:</strong> Combining the legal compliance of NASDAQ and KOSDAQ public companies with the agility of Web3 technology — a market entry barrier protected by exclusive IP rights and hardware partnerships.</p>
+      </div>
+      <h2>Anchor Partners</h2>
+      <div class="partner-grid">
+        <div class="partner-card"><div class="partner-name">EHang Holdings</div><div class="partner-type">NASDAQ Listed · UAM Hardware RWA</div><p style="font-size:12px;color:#888;margin-top:8px;font-weight:300;">Exclusive strategic alliance for Future Mobility hardware RWA tokenization.</p></div>
+        <div class="partner-card"><div class="partner-name">Danal Group</div><div class="partner-type">KOSDAQ Listed · Major Shareholder</div><p style="font-size:12px;color:#888;margin-top:8px;font-weight:300;">KRW 10B Pre-A investment and exclusive access to Asia's largest IP library (150,000+ IPs).</p></div>
+        <div class="partner-card"><div class="partner-name">Polygon Labs</div><div class="partner-type">Blockchain Infrastructure · 2023</div><p style="font-size:12px;color:#888;margin-top:8px;font-weight:300;">Primary settlement layer partnership for all NFT and governance transactions.</p></div>
+        <div class="partner-card"><div class="partner-name">Lotte Home Shopping</div><div class="partner-type">Enterprise NFT · Mainnet Dev</div><p style="font-size:12px;color:#888;margin-top:8px;font-weight:300;">Development of NFT Shop mainnet for Korea's largest home shopping network.</p></div>
+        <div class="partner-card"><div class="partner-name">Bifrost</div><div class="partner-type">Cross-Chain Liquidity · 2023</div><p style="font-size:12px;color:#888;margin-top:8px;font-weight:300;">Cross-chain protocol enabling EGGT liquidity across multiple blockchain ecosystems.</p></div>
+        <div class="partner-card"><div class="partner-name">AhnLab Blockchain</div><div class="partner-type">Web3 Wallet · 2024</div><p style="font-size:12px;color:#888;margin-top:8px;font-weight:300;">Enterprise-grade Web 3.0 wallet from Korea's leading cybersecurity firm.</p></div>
+        <div class="partner-card"><div class="partner-name">PICAON</div><div class="partner-type">Game Portal · P2E 2025</div><p style="font-size:12px;color:#888;margin-top:8px;font-weight:300;">Strategic game portal partnership for the 2026 P2E platform launch.</p></div>
+        <div class="partner-card"><div class="partner-name">Weracle</div><div class="partner-type">Singapore Game Platform · 2024</div><p style="font-size:12px;color:#888;margin-top:8px;font-weight:300;">Singapore-based game platform MOU for P2E infrastructure development.</p></div>
+        <div class="partner-card"><div class="partner-name">Ruby Records</div><div class="partner-type">Music Platform · 2024</div><p style="font-size:12px;color:#888;margin-top:8px;font-weight:300;">Music streaming and IP partnership expanding EGGT into music rights tokenization.</p></div>
+        <div class="partner-card"><div class="partner-name">Hype Lab</div><div class="partner-type">Web3 Ticketing · 2024</div><p style="font-size:12px;color:#888;margin-top:8px;font-weight:300;">Performance-based Web3 ticketing for live entertainment including K-pop concerts.</p></div>
+        <div class="partner-card"><div class="partner-name">Eight One</div><div class="partner-type">KOSDAQ Listed · 2023</div><p style="font-size:12px;color:#888;margin-top:8px;font-weight:300;">Strategic partnership with KOSDAQ-listed company for blockchain commerce integration.</p></div>
+        <div class="partner-card"><div class="partner-name">Blockstreet</div><div class="partner-type">Blockchain Finance · MOU 2025</div><p style="font-size:12px;color:#888;margin-top:8px;font-weight:300;">MOU for financial infrastructure and liquidity management within the EGGT ecosystem.</p></div>
+      </div>
+      <div class="doc-nav"><button class="doc-nav-btn" onclick="show('tokenomics')">← 11. Tokenomics</button><button class="doc-nav-btn" onclick="show('roadmap')">13. Roadmap →</button></div>
+    </div>
+
+    <!-- ROADMAP -->
+    <div class="section" id="roadmap">
+      <div class="hero-eyebrow">13 · OTHER INFORMATION</div>
+      <h1>Roadmap <span class="accent">2026</span></h1>
+      <p class="lead">The 2026 roadmap is organized around four strategic pillars: global exchange accessibility, P2E platform launch, Blockchain Poll deployment, and U.S. market entry through luxury rental services.</p>
+      <h2>2026 Quarterly Plan</h2>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">Q1 2026</div><div class="tl-title">Exchange Advancement & Global Accessibility</div><div class="tl-body">Advancement toward TOP-tier global exchange listing. Expansion of EGGT token liquidity and global accessibility. Review of global partners and operational structure.</div></div>
+        <div class="tl-item"><div class="tl-dot purple"></div><div class="tl-year">Q2 2026</div><div class="tl-title">P2E Platform Launch</div><div class="tl-body">Launch of the P2E integrated platform with multiple game services. Planning of luxury rental services for the U.S. market. Global partner network expansion.</div></div>
+        <div class="tl-item"><div class="tl-dot green"></div><div class="tl-year">Q3 2026</div><div class="tl-title">Blockchain Poll & NFT Expansion</div><div class="tl-body">Launch of Blockchain Poll decentralized voting infrastructure. RWA-backed NFT marketplace expansion with new asset classes. U.S. luxury rental service operational launch.</div></div>
+        <div class="tl-item"><div class="tl-dot gold"></div><div class="tl-year">Q4 2026</div><div class="tl-title">Ecosystem Consolidation & Global Scale</div><div class="tl-body">Full ecosystem integration across P2E, NFT marketplace, Blockchain Poll, and EGGTFI. Global exchange listing completion. EHang UAM hardware RWA tokenization pilot launch.</div></div>
+      </div>
+      <h2>Long-Term Vision</h2>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon">🌏</div><h4>Global Exchange Tier</h4><p>EGGT listed on major global exchange platforms to enable institutional access and global retail participation.</p></div>
+        <div class="card"><div class="card-icon">🚗</div><h4>U.S. Luxury Rental</h4><p>Launch of tokenized luxury vehicle and asset rental services in the U.S. market using EGGT as payment and rewards currency.</p></div>
+        <div class="card"><div class="card-icon">🚁</div><h4>UAM Hardware RWA</h4><p>World's first tokenized Urban Air Mobility hardware fractional ownership through the EHang NASDAQ partnership.</p></div>
+        <div class="card"><div class="card-icon">🎵</div><h4>IP Monetization at Scale</h4><p>Systematic tokenization of Danal's 150,000+ IP library, enabling fan investment and creator royalty optimization.</p></div>
+      </div>
+      <div class="doc-nav"><button class="doc-nav-btn" onclick="show('partners')">← 12. Partners</button><button class="doc-nav-btn" onclick="show('team')">14. Team →</button></div>
+    </div>
+
+    <!-- TEAM -->
+    <div class="section" id="team">
+      <div class="hero-eyebrow">14 · OTHER INFORMATION</div>
+      <h1>Team & <span class="accent">Advisors</span></h1>
+      <p class="lead">Egg N Partners is led by a team with deep expertise in token economy design, real-world commerce data processing, and enterprise blockchain development — backed by globally experienced advisors from traditional finance, gaming, and technology sectors.</p>
+      <h2>Leadership</h2>
+      <div class="card-grid">
+        <div class="card"><div class="card-icon">👤</div><h4>Hyun Ik-Jae</h4><p><strong>CEO & Co-Founder</strong><br/>Architect of the EGGT token economy. Background in software development, blockchain commerce infrastructure design, and enterprise NFT platform deployment.</p></div>
+      </div>
+      <h2>Core Team Expertise</h2>
+      <ul class="doc-list">
+        <li>Token economy design and multi-smart contract architecture</li>
+        <li>Real-world commerce data processing and supply chain integration</li>
+        <li>Enterprise blockchain application development (Lotte Home Shopping, Danal)</li>
+        <li>NFT marketplace operations and RWA asset origination</li>
+        <li>Community growth and decentralized governance facilitation</li>
+        <li>Cross-border business development across Korea, Singapore, and U.S.</li>
+      </ul>
+      <h2>Backers & Investors</h2>
+      <div class="partner-grid">
+        <div class="partner-card"><div class="partner-name">Gemhead</div><div class="partner-type">Global VC · Lead Investor</div></div>
+        <div class="partner-card"><div class="partner-name">M2M</div><div class="partner-type">Global VC · Strategic Investor</div></div>
+        <div class="partner-card"><div class="partner-name">Danal Group</div><div class="partner-type">KOSDAQ · KRW 10B Pre-A Lead</div></div>
+      </div>
+      <div class="doc-nav"><button class="doc-nav-btn" onclick="show('roadmap')">← 13. Roadmap</button><button class="doc-nav-btn" onclick="show('disclaimer')">15. Disclaimer →</button></div>
+    </div>
+
+    <!-- DISCLAIMER -->
+    <div class="section" id="disclaimer">
+      <div class="hero-eyebrow">15 · OTHER INFORMATION</div>
+      <h1><span class="accent">Disclaimer</span></h1>
+      <div class="callout warning">
+        <span class="callout-icon">⚠</span>
+        <p>This document is for informational purposes only. Nothing in this whitepaper constitutes financial, investment, legal, or tax advice. Participation in the EGGT ecosystem involves risk, and prospective participants should conduct their own due diligence.</p>
+      </div>
+      <h2>Important Notices</h2>
+      <ul class="doc-list">
+        <li>This whitepaper does not constitute an offer to sell or solicitation of an offer to buy any securities in any jurisdiction.</li>
+        <li>The EGGT token is a utility and governance token. It is not designed to be an investment instrument and should not be purchased with speculative intent.</li>
+        <li>Regulatory frameworks for digital assets vary by jurisdiction. Prospective participants are responsible for ensuring compliance with applicable laws in their home country.</li>
+        <li>Forward-looking statements in this document are based on management's current expectations and are subject to significant risks and uncertainties.</li>
+        <li>Past performance of NFT sales and token markets is not indicative of future results.</li>
+        <li>The smart contract infrastructure underlying EGGT has been subject to security audit processes. However, no smart contract audit eliminates all risk of loss.</li>
+        <li>Egg N Partners Co., Ltd. reserves the right to update this whitepaper without prior notice to reflect changes in technology, regulation, or business strategy.</li>
+      </ul>
+      <h2>Smart Contract Audit</h2>
+      <p>EGGT's core smart contracts have undergone third-party security audits to verify the integrity of token issuance, governance mechanisms, and NFT marketplace operations. Audit reports are available upon request to institutional partners and prospective exchange listing partners.</p>
+      <div class="callout info">
+        <span class="callout-icon">📧</span>
+        <p>For institutional inquiries, partnership discussions, or investor relations: <span class="mono">contact@eggt.io</span> · <a href="https://www.eggt.io" style="color:var(--accent);">www.eggt.io</a></p>
+      </div>
+      <div class="doc-nav"><button class="doc-nav-btn" onclick="show('team')">← 14. Team</button><button class="doc-nav-btn" onclick="show('intro')">↑ Back to Top</button></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'"+id+"'")) {
+      n.classList.add('active');
+    }
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.querySelector('.sidebar').classList.remove('open');
+}
+</script>
+</body>
+</html>
